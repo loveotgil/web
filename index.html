@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>טורניר קטאן | אהבת המשחק</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@500;700;900&family=Assistant:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wood-dark:#241a14; --wood:#5a3a22; --brick:#c1622d; --brick-deep:#9c4a1f;
+    --forest:#2f5233; --forest-deep:#20391f; --gold:#d4a73b; --parchment:#efe4c8;
+    --parchment-2:#e4d5ac; --cream:#faf6ea; --ink:#2a2119;
+    font-family:'Assistant',sans-serif;
+    padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+    box-sizing:border-box;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-padding-top:env(safe-area-inset-top,0px);}
+  body{margin:0;background:var(--cream);color:var(--ink);line-height:1.55;}
+  h1,h2,h3{font-family:'Frank Ruhl Libre',serif;margin:0;}
+  img{max-width:100%;display:block;}
+  .wrap{max-width:760px;margin:0 auto;padding:0 22px;}
+  a{color:inherit;}
+
+  /* HERO */
+  .hero{
+    background:
+      radial-gradient(circle at 15% 20%, rgba(212,167,59,.18), transparent 55%),
+      linear-gradient(160deg,var(--forest-deep) 0%, var(--wood-dark) 65%);
+    color:var(--cream); padding:48px 0 40px; position:relative; overflow:hidden;
+  }
+  .hero::after{
+    content:""; position:absolute; inset:auto -10% -30% -10%; height:60%;
+    background:repeating-linear-gradient(120deg, transparent 0 38px, rgba(212,167,59,.06) 38px 40px);
+    transform:rotate(-4deg); pointer-events:none;
+  }
+  .hero .wrap{position:relative;}
+  .brand{display:flex;align-items:center;gap:12px;margin-bottom:34px;}
+  .brand img{width:44px;height:44px;border-radius:10px;}
+  .brand span{font-family:'Frank Ruhl Libre',serif;font-weight:700;font-size:1.15rem;}
+  .eyebrow{color:var(--gold);font-weight:700;font-size:.95rem;margin-bottom:10px;}
+  h1.title{font-size:clamp(2.1rem,7vw,3.1rem);font-weight:900;line-height:1.12;margin-bottom:14px;}
+  h1.title em{font-style:normal;color:var(--brick);}
+  .hero p.lede{font-size:1.08rem;max-width:46ch;color:var(--parchment-2);margin-bottom:26px;}
+  .cta{
+    display:inline-block;background:var(--brick);color:var(--cream);font-weight:700;
+    padding:14px 30px;border-radius:6px;text-decoration:none;font-size:1.05rem;
+    box-shadow:0 4px 0 var(--brick-deep);
+  }
+  .cta:active{transform:translateY(2px);box-shadow:0 2px 0 var(--brick-deep);}
+  .facts{display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:30px;font-size:.98rem;color:var(--parchment-2);}
+  .facts b{color:var(--cream);}
+
+  /* SECTIONS */
+  section{padding:40px 0;}
+  .section-head{margin-bottom:22px;}
+  .section-head h2{font-size:1.55rem;color:var(--wood-dark);}
+  .section-head .num{color:var(--brick);font-weight:700;}
+
+  /* HOW IT WORKS */
+  .steps{display:grid;gap:14px;}
+  .step{
+    background:var(--parchment);border:1px solid var(--parchment-2);border-radius:4px;
+    padding:16px 18px;display:flex;gap:14px;align-items:flex-start;
+  }
+  .step .n{
+    flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:var(--forest);
+    color:var(--cream);display:flex;align-items:center;justify-content:center;font-weight:700;
+    font-family:'Frank Ruhl Libre',serif;
+  }
+  .step p{margin:0;font-size:.97rem;}
+  .step strong{color:var(--wood-dark);}
+
+  /* DETAILS CARDS */
+  .details{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .dcard{background:var(--wood-dark);color:var(--parchment);border-radius:6px;padding:18px;}
+  .dcard .label{font-size:.82rem;color:var(--gold);margin-bottom:6px;}
+  .dcard .val{font-family:'Frank Ruhl Libre',serif;font-size:1.25rem;font-weight:700;}
+  .dcard .sub{font-size:.85rem;color:var(--parchment-2);margin-top:4px;}
+  @media(max-width:480px){.details{grid-template-columns:1fr;}}
+
+  .perks{margin-top:16px;padding:16px 18px;background:var(--parchment);border-radius:6px;font-size:.95rem;}
+  .perks b{color:var(--brick-deep);}
+
+  /* REGISTRATION */
+  .reg-box{background:var(--forest-deep);border-radius:10px;padding:28px 24px;color:var(--cream);}
+  .reg-box h2{color:var(--cream);}
+  .reg-box .section-head{margin-bottom:6px;}
+  .reg-sub{color:var(--parchment-2);font-size:.95rem;margin-bottom:22px;}
+  form{display:grid;gap:14px;}
+  label{font-size:.9rem;color:var(--parchment-2);display:block;margin-bottom:5px;}
+  input,select{
+    width:100%;padding:11px 12px;border-radius:5px;border:1px solid rgba(255,255,255,.25);
+    background:rgba(255,255,255,.06);color:var(--cream);font-family:inherit;font-size:1rem;
+  }
+  input::placeholder{color:rgba(239,228,200,.4);}
+  input:focus,select:focus{outline:2px solid var(--gold);outline-offset:1px;}
+  select option{color:#111;}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:480px){.row2{grid-template-columns:1fr;}}
+  .submit-btn{
+    background:var(--brick);color:var(--cream);border:none;border-radius:6px;padding:14px;
+    font-size:1.05rem;font-weight:700;font-family:inherit;cursor:pointer;margin-top:6px;
+    box-shadow:0 4px 0 var(--brick-deep);
+  }
+  .submit-btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--brick-deep);}
+  .form-note{font-size:.82rem;color:rgba(239,228,200,.55);margin-top:2px;}
+  .thanks{display:none;text-align:center;padding:30px 10px;}
+  .thanks.show{display:block;}
+  .thanks .check{font-size:2.4rem;margin-bottom:10px;}
+  .thanks h3{color:var(--cream);font-size:1.3rem;margin-bottom:8px;}
+  .thanks p{color:var(--parchment-2);font-size:.95rem;}
+
+  /* NEXT EVENT */
+  .next{
+    display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;
+    background:var(--parchment);border:1px dashed var(--brick);border-radius:6px;padding:18px 20px;
+  }
+  .next .t{font-family:'Frank Ruhl Libre',serif;font-weight:700;color:var(--wood-dark);}
+  .next .d{font-size:.9rem;color:var(--wood);}
+
+  footer{background:var(--wood-dark);color:var(--parchment-2);padding:26px 0;font-size:.88rem;text-align:center;}
+  footer a{color:var(--gold);text-decoration:none;}
+
+  @media (prefers-reduced-motion:no-preference){
+    .cta,.submit-btn{transition:transform .08s ease;}
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="wrap">
+    <div class="brand"><img src="data:image/webp;base64,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" alt="אהבת המשחק"><span>אהבת המשחק</span></div>
+    <div class="eyebrow">טורניר עונתי · פאב המורגן</div>
+    <h1 class="title">טורניר <em>קטאן</em><br>אצלנו, בפאב.</h1>
+    <p class="lede">ערב אחד, כמה שולחנות, הרבה קוביות — ורק ארבעה יגיעו לגמר. 18+, מקומות מוגבלים.</p>
+    <a class="cta" href="#register">להרשמה לטורניר</a>
+    <div class="facts">
+      <div><b>14.10</b> · יום ד׳, 18:00</div>
+      <div><b>פאב המורגן</b> · Morgan the Irish</div>
+      <div><b>120 ₪</b> · כניסה 18+</div>
+    </div>
+  </div>
+</div>
+
+<section>
+  <div class="wrap">
+    <div class="section-head"><h2>איך משחקים את הטורניר</h2></div>
+    <div class="steps">
+      <div class="step"><div class="n">1</div><p><strong>שלב ההצלבה.</strong> 3–4 שחקנים בכל שולחן, שני משחקים מוצלבים. שני הטובים מכל שולחן ממשיכים הלאה.</p></div>
+      <div class="step"><div class="n">2</div><p><strong>ניקוד המשחק.</strong> המנצח בכל משחק מקבל 10 נקודות, שאר השחקנים 2–9 לפי מיקום.</p></div>
+      <div class="step"><div class="n">3</div><p><strong>ניקוד מצטבר.</strong> הניקוד האישי הכפול נשקלל מול הממוצע הכפול — כך נקבע מי מתקדם לגמר.</p></div>
+      <div class="step"><div class="n">4</div><p><strong>הגמר הגדול.</strong> ארבעת השחקנים שהגיעו לגמר פעמיים משחקים אחד מול השני. שוויון נשבר לפי סכום הניקוד המצטבר.</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head"><h2>פרטי הערב</h2></div>
+    <div class="details">
+      <div class="dcard"><div class="label">תאריך ושעה</div><div class="val">14.10 · 18:00</div><div class="sub">יום ד׳, הרשמה בכניסה מ־17:45</div></div>
+      <div class="dcard"><div class="label">מקום</div><div class="val">פאב המורגן</div><div class="sub">Morgan the Irish</div></div>
+      <div class="dcard"><div class="label">עלות</div><div class="val">120 ₪</div><div class="sub">כניסה לבעלי גיל 18+ בלבד</div></div>
+      <div class="dcard"><div class="label">מארגן</div><div class="val">אהבת המשחק</div><div class="sub">gameslover.co.il</div></div>
+    </div>
+    <div class="perks">🍺 <b>בירה ראשונה עלינו</b> — ובהפסקה מחכה בופה עשיר לכל המשתתפים.</div>
+  </div>
+</section>
+
+<section id="register">
+  <div class="wrap">
+    <div class="reg-box">
+      <div class="section-head"><h2>הרשמה לטורניר</h2></div>
+      <p class="reg-sub">מלאו פרטים — נפתח לכם מייל מוכן לשליחה, ואנחנו נחזור עם אישור מקום.</p>
+
+      <form id="regForm">
+        <div class="row2">
+          <div><label for="fname">שם מלא</label><input id="fname" required placeholder="לדוגמה: דנה כהן"></div>
+          <div><label for="fphone">טלפון</label><input id="fphone" type="tel" required placeholder="050-0000000"></div>
+        </div>
+        <div>
+          <label for="femail">אימייל</label><input id="femail" type="email" required placeholder="name@mail.com">
+        </div>
+        <div class="row2">
+          <div>
+            <label for="fexp">רמת ניסיון בקטאן</label>
+            <select id="fexp">
+              <option>שיחקתי כמה פעמים</option>
+              <option>משחק/ת בקביעות</option>
+              <option>ותיק/ה — אני מגיע/ה לנצח</option>
+            </select>
+          </div>
+          <div>
+            <label for="fpeople">מגיע/ה עם עוד מישהו?</label>
+            <select id="fpeople">
+              <option>לבד</option>
+              <option>עם עוד אדם 1</option>
+              <option>עם עוד 2+ אנשים</option>
+            </select>
+          </div>
+        </div>
+        <button class="submit-btn" type="submit">שלחו הרשמה</button>
+        <div class="form-note">בלחיצה על "שלחו הרשמה" ייפתח מייל מוכן אל love.otg.il@gmail.com — פשוט לשלוח.</div>
+      </form>
+
+      <div class="thanks" id="thanks">
+        <div class="check">🎲</div>
+        <h3>כמעט סיימנו!</h3>
+        <p>נפתח לך טיוטת מייל עם הפרטים — רק צריך לשלוח אותה, ואנחנו נחזור עם אישור מקום לטורניר ה־14.10.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="next">
+      <div><div class="t">האירוע הבא כבר ב־26.10</div><div class="d">טורניר נוסף בקרוב — פרטים יעודכנו באתר וברשתות.</div></div>
+      <a class="cta" style="padding:10px 20px;font-size:.9rem;" href="mailto:love.otg.il@gmail.com?subject=עדכנו אותי על 26.10">עדכנו אותי</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    אהבת המשחק · gameslover.co.il · <a href="mailto:love.otg.il@gmail.com">love.otg.il@gmail.com</a>
+  </div>
+</footer>
+
+<script>
+  const form = document.getElementById('regForm');
+  const thanks = document.getElementById('thanks');
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const name = document.getElementById('fname').value.trim();
+    const phone = document.getElementById('fphone').value.trim();
+    const email = document.getElementById('femail').value.trim();
+    const exp = document.getElementById('fexp').value;
+    const people = document.getElementById('fpeople').value;
+
+    const subject = encodeURIComponent('הרשמה לטורניר קטאן 14.10 - ' + name);
+    const body = encodeURIComponent(
+      'הרשמה לטורניר קטאן - 14.10, פאב המורגן\n\n' +
+      'שם: ' + name + '\n' +
+      'טלפון: ' + phone + '\n' +
+      'אימייל: ' + email + '\n' +
+      'רמת ניסיון: ' + exp + '\n' +
+      'מגיע/ה: ' + people + '\n'
+    );
+    window.location.href = 'mailto:love.otg.il@gmail.com?subject=' + subject + '&body=' + body;
+
+    form.style.display = 'none';
+    thanks.classList.add('show');
+  });
+</script>
+
+</body>
+</html>
