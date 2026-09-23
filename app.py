@@ -1,232 +1,112 @@
-import streamlit as st
-import pandas as pd
-import random
+#!/usr/bin/env python3
+"""
+deploy_github_pages.py
+------------------------
+מעלה את קבצי האתר (HTML/CSS/JS) לריפו קיים ב-GitHub, כדי שיוצג ב-GitHub Pages.
 
-# --- הגדרת עמוד ותצורת RTL ---
-st.set_page_config(
-    page_title="אהבת המשחק - Love The Game",
-    page_icon="🎲",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+לפני הרצה ראשונה - הגדר בהמשך הקובץ (בקטע CONFIG):
+  1. REPO_URL     - כתובת ה-git של הריפו שלך (SSH או HTTPS)
+  2. BRANCH       - הברנץ' שממנו GitHub Pages מגיש (בדוק ב-Settings > Pages)
+  3. SITE_DIR     - התיקייה המקומית עם קבצי האתר להעלאה (ברירת מחדל: "site")
 
-# --- מילון תרגומים לשפות (עברית, אנגלית, רוסית) ---
-TRANSLATIONS = {
-    "עברית": {
-        "title": "אהבת המשחק",
-        "subtitle": "הבית של קהילת משחקי הלוח, הקלפים והטורנירים בישראל",
-        "nav_home": "🏠 בית ורישום לליגה",
-        "nav_league": "🏆 טבלת הליגה",
-        "nav_rules": "📜 חוקים וטורניר",
-        "nav_admin": "⚙️ פאנל ניהול",
-        "reg_header": "הרשמה מהירה לליגה ולטורנירים",
-        "choose_social": "התחבר באמצעות:",
-        "username_label": "בחר שם משתמש (כינוי בליגה):",
-        "email_label": "כתובת אימייל:",
-        "register_btn": "הירשם עכשיו!",
-        "success_reg": "🎉 כל הכבוד! נרשמת בהצלחה לליגה!",
-        "your_player_id": "מספר השחקן שלך בליגה:",
-        "league_table_title": "טבלת השחקנים הרשומים בליגה",
-        "rules_title": "חוקי הטורניר והסברים",
-        "rules_placeholder": "כאן יופיעו בהמשך חוקי המשחקים, נהלי הטורניר ולוחות הזמנים המעודכנים.",
-        "admin_title": "פאנל ניהול - ניהול שחקנים וניקוד",
-        "admin_pass": "סיסמת מנהל:",
-        "admin_login_err": "סיסמה שגויה",
-        "select_player": "בחר שחקן לעדכון:",
-        "new_score": "עדכן ניקוד חדש:",
-        "update_btn": "שמור שינויים",
-        "score_updated": "הניקוד עודכן בהצלחה!",
-        "total_players": "סה״כ שחקנים רשומים:",
-        "lang_select": "בחר שפה / Language / Язык"
-    },
-    "English": {
-        "title": "Love The Game",
-        "subtitle": "The home of board games, card games, and tournaments community in Israel",
-        "nav_home": "🏠 Home & Registration",
-        "nav_league": "🏆 League Standings",
-        "nav_rules": "📜 Rules & Tournament",
-        "nav_admin": "⚙️ Admin Panel",
-        "reg_header": "Quick Registration for League & Tournaments",
-        "choose_social": "Sign in with:",
-        "username_label": "Choose Username (Nickname):",
-        "email_label": "Email Address:",
-        "register_btn": "Register Now!",
-        "success_reg": "🎉 Congratulations! You successfully registered for the league!",
-        "your_player_id": "Your League Player ID:",
-        "league_table_title": "Registered League Players",
-        "rules_title": "Tournament Rules & Information",
-        "rules_placeholder": "Game rules, tournament guidelines and updated schedules will be published here soon.",
-        "admin_title": "Admin Panel - Manage Players & Scores",
-        "admin_pass": "Admin Password:",
-        "admin_login_err": "Incorrect password",
-        "select_player": "Select player to update:",
-        "new_score": "Update new score/points:",
-        "update_btn": "Save Changes",
-        "score_updated": "Score updated successfully!",
-        "total_players": "Total Registered Players:",
-        "lang_select": "Language"
-    },
-    "Русский": {
-        "title": "Любовь к Игре (Love The Game)",
-        "subtitle": "Дом сообщества настольных игр, карточных игр и турниров в Израиле",
-        "nav_home": "🏠 Главная и Регистрация",
-        "nav_league": "🏆 Таблица Лиги",
-        "nav_rules": "📜 Правила и Турнир",
-        "nav_admin": "⚙️ Панель Администратора",
-        "reg_header": "Быстрая регистрация в лигу и турниры",
-        "choose_social": "Войти через:",
-        "username_label": "Выберите имя пользователя (ник):",
-        "email_label": "Электронная почта:",
-        "register_btn": "Зарегистрироваться!",
-        "success_reg": "🎉 Поздравляем! Вы успешно зарегистрировались в лиге!",
-        "your_player_id": "Ваш номер игрока в лиге:",
-        "league_table_title": "Зарегистрированные игроки лиги",
-        "rules_title": "Правила турнира и информация",
-        "rules_placeholder": "Правила игр, регламент турнира и расписание будут опубликованы здесь позже.",
-        "admin_title": "Панель управления - Управление игроками и очками",
-        "admin_pass": "Пароль администратора:",
-        "admin_login_err": "Неверный пароль",
-        "select_player": "Выберите игрока для обновления:",
-        "new_score": "Новый счет / очки:",
-        "update_btn": "Сохранить изменения",
-        "score_updated": "Счет успешно обновлен!",
-        "total_players": "Всего зарегистрированных игроков:",
-        "lang_select": "Язык"
-    }
-}
+איך זה עובד:
+  - אם יש כבר קלון מקומי של הריפו (בתיקייה local_repo/) - הסקריפט מעדכן אותו.
+  - אם אין - הסקריפט משכפל (clone) את הריפו אוטומטית.
+  - מעתיק את כל הקבצים מ-SITE_DIR לתוך הריפו (שומר על .git ו-README קיימים).
+  - עושה git add + commit + push.
 
-# --- הגדרת בסיס נתונים ב-Session State (שחקנים לדוגמה) ---
-if 'players_db' not in st.session_state:
-    st.session_state.players_db = pd.DataFrame([
-        {"player_id": "LOTG-1001", "username": "LiranGamer", "email": "liran@example.com", "provider": "Google", "score": 45},
-        {"player_id": "LOTG-1002", "username": "DiceQueen", "email": "queen@example.com", "provider": "TikTok", "score": 38},
-        {"player_id": "LOTG-1003", "username": "BoardMaster", "email": "master@example.com", "provider": "Facebook", "score": 52},
-    ])
+דרישות מקדימות במחשב שמריץ את הסקריפט:
+  - git מותקן ובהרשאות push לריפו (מוגדר SSH key, או HTTPS עם token שמור ב-credential helper).
 
-# --- סרגלים צדדיים והגדרות שפה ---
-lang = st.sidebar.selectbox("🌐 Choose Language / שפה / Язык", ["עברית", "English", "Русский"])
-t = TRANSLATIONS[lang]
+הרצה:
+  python3 deploy_github_pages.py
+  python3 deploy_github_pages.py --message "עדכון דף הרשמה לטורניר"
+"""
 
-# הגדרת כיוון טקסט (RTL לעברית, LTR לאחרים)
-if lang == "עברית":
-    st.markdown("""
-        <style>
-            body, div, span, p, h1, h2, h3, h4, h5, h6 {
-                direction: rtl;
-                text-align: right;
-            }
-        </style>
-    """, unsafe_allow_html=True)
+import argparse
+import shutil
+import subprocess
+import sys
+from pathlib import Path
 
-st.sidebar.markdown("---")
-page = st.sidebar.radio("ניווט באתר", [t["nav_home"], t["nav_league"], t["nav_rules"], t["nav_admin"]])
+# ============== CONFIG - ערוך לפני הרצה ==============
+REPO_URL = "git@github.com:USERNAME/REPO_NAME.git"   # <-- להחליף בכתובת הריפו שלך
+BRANCH = "main"                                       # <-- הברנץ' ש-Pages מגיש ממנו (main / gh-pages)
+SITE_DIR = Path(__file__).parent / "site"             # תיקיית קבצי האתר המקומית להעלאה
+LOCAL_CLONE_DIR = Path(__file__).parent / "local_repo"  # לאן יישמר הקלון המקומי
+# =======================================================
 
-# --- כותרת ראשית ולוגו ---
-st.title(f"🎲 {t['title']}")
-st.subheader(t['subtitle'])
-st.markdown("---")
 
-# ==================== דף בית ורישום (Home & Registration) ====================
-if page == t["nav_home"]:
-    st.header(t["reg_header"])
-    
-    with st.form("registration_form"):
-        st.markdown(f"**{t['choose_social']}**")
-        social_provider = st.radio("Provider", ["Google 🌐", "Facebook 👤", "TikTok 🎵"], horizontal=True)
-        
-        username = st.text_input(t["username_label"])
-        email = st.text_input(t["email_label"])
-        
-        submitted = st.form_submit_button(t["register_btn"])
-        
-        if submitted:
-            if not username or not email:
-                st.error("אנא מלא את כל השדות / Please fill in all fields" if lang=="עברית" else "Please fill all fields")
-            elif username in st.session_state.players_db["username"].values:
-                st.error("שם המשתמש כבר תפוס, בחר כינוי אחר. / Username already taken.")
-            else:
-                new_id = f"LOTG-{random.randint(1004, 9999)}"
-                new_row = pd.DataFrame([{
-                    "player_id": new_id,
-                    "username": username,
-                    "email": email,
-                    "provider": social_provider.split()[0],
-                    "score": 10  # בונוס רישום ראשוני
-                }])
-                st.session_state.players_db = pd.concat([st.session_state.players_db, new_row], ignore_index=True)
-                
-                st.success(t["success_reg"])
-                st.balloons()
-                st.info(f"**{t['your_player_id']}** `{new_id}`")
+def run(cmd, cwd=None):
+    print(f"$ {' '.join(cmd)}")
+    result = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True)
+    if result.returncode != 0:
+        print(result.stdout)
+        print(result.stderr, file=sys.stderr)
+        sys.exit(f"שגיאה בהרצת הפקודה: {' '.join(cmd)}")
+    if result.stdout.strip():
+        print(result.stdout.strip())
+    return result
 
-    st.markdown("---")
-    st.metric(label=t["total_players"], value=len(st.session_state.players_db))
 
-# ==================== טבלת הליגה (League Standings) ====================
-elif page == t["nav_league"]:
-    st.header(t["league_table_title"])
-    sorted_df = st.session_state.players_db.sort_values(by="score", ascending=False).reset_index(drop=True)
-    sorted_df.index = sorted_df.index + 1
-    
-    st.dataframe(
-        sorted_df[["player_id", "username", "provider", "score"]],
-        column_config={
-            "player_id": "מספר שחקן (ID)",
-            "username": "שם משתמש",
-            "provider": "אמצעי רישום",
-            "score": "ניקוד ליגה"
-        },
-        use_container_width=True
+def ensure_repo_cloned():
+    if LOCAL_CLONE_DIR.exists() and (LOCAL_CLONE_DIR / ".git").exists():
+        print(f"נמצא קלון קיים ב-{LOCAL_CLONE_DIR}, מעדכן...")
+        run(["git", "fetch", "origin"], cwd=LOCAL_CLONE_DIR)
+        run(["git", "checkout", BRANCH], cwd=LOCAL_CLONE_DIR)
+        run(["git", "pull", "origin", BRANCH], cwd=LOCAL_CLONE_DIR)
+    else:
+        print(f"משכפל את הריפו לתוך {LOCAL_CLONE_DIR} ...")
+        run(["git", "clone", "--branch", BRANCH, REPO_URL, str(LOCAL_CLONE_DIR)])
+
+
+def copy_site_files():
+    if not SITE_DIR.exists():
+        sys.exit(f"תיקיית האתר {SITE_DIR} לא נמצאה. ודא שיש בה את קבצי ה-HTML/CSS/JS להעלאה.")
+
+    print(f"מעתיק קבצים מ-{SITE_DIR} אל {LOCAL_CLONE_DIR} ...")
+    for item in SITE_DIR.iterdir():
+        dest = LOCAL_CLONE_DIR / item.name
+        if item.is_dir():
+            if dest.exists():
+                shutil.rmtree(dest)
+            shutil.copytree(item, dest)
+        else:
+            shutil.copy2(item, dest)
+
+
+def commit_and_push(message: str):
+    run(["git", "add", "-A"], cwd=LOCAL_CLONE_DIR)
+
+    status = subprocess.run(
+        ["git", "status", "--porcelain"], cwd=LOCAL_CLONE_DIR, capture_output=True, text=True
     )
-    
-    # כפתור ייצוא לקובץ CSV
-    csv_data = st.session_state.players_db.to_csv(index=False).encode('utf-8-sig')
-    st.download_button(
-        label="📥 ייצא את רשימת הנרשמים לקובץ CSV",
-        data=csv_data,
-        file_name="tournament_registrants.csv",
-        mime="text/csv",
+    if not status.stdout.strip():
+        print("אין שינויים חדשים להעלאה.")
+        return
+
+    run(["git", "commit", "-m", message], cwd=LOCAL_CLONE_DIR)
+    run(["git", "push", "origin", BRANCH], cwd=LOCAL_CLONE_DIR)
+    print("\n✅ האתר הועלה בהצלחה! השינויים יופיעו ב-GitHub Pages בדרך כלל תוך דקה-שתיים.")
+
+
+def main():
+    parser = argparse.ArgumentParser(description="פריסת האתר ל-GitHub Pages")
+    parser.add_argument(
+        "--message", "-m", default="עדכון אתר", help="הודעת ה-commit"
     )
+    args = parser.parse_args()
 
-# ==================== חוקים וטורניר (Rules) ====================
-elif page == t["nav_rules"]:
-    st.header(t["rules_title"])
-    st.info(t["rules_placeholder"])
-    
-    st.markdown("""
-    ### מבנה הטורנירים הקרובים:
-    - **טורניר פתיחת עונה:** משחקי אסטרטגיה וקופסאות בסיס.
-    - **שיטת הניקוד:** ניצחון מעניק 10 נקודות, השתתפות מעניקה 3 נקודות.
-    """)
-
-# ==================== פאנל ניהול (Admin Panel) ====================
-elif page == t["nav_admin"]:
-    st.header(t["admin_title"])
-    admin_password = st.text_input(t["admin_pass"], type="password")
-    
-    if admin_password == "admin123":
-        st.success("התחברת בהצלחה כמנהל מערכת!")
-        player_list = st.session_state.players_db["username"].tolist()
-        selected_player = st.selectbox(t["select_player"], player_list)
-        current_score = int(st.session_state.players_db.loc[st.session_state.players_db["username"] == selected_player, "score"].values[0])
-        new_score_val = st.number_input(t["new_score"], value=current_score, step=1)
-        
-        if st.button(t["update_btn"]):
-            st.session_state.players_db.loc[st.session_state.players_db["username"] == selected_player, "score"] = new_score_val
-            st.success(t["score_updated"])
-            st.rerun()
-            
-        st.markdown("### רשימת שחקנים מלאה לניהול:")
-        st.dataframe(st.session_state.players_db, use_container_width=True)
-        
-        admin_csv = st.session_state.players_db.to_csv(index=False).encode('utf-8-sig')
-        st.download_button(
-            label="📥 הורד גיבוי נרשמים (CSV)",
-            data=admin_csv,
-            file_name="tournament_registrants_admin.csv",
-            mime="text/csv",
+    if "USERNAME/REPO_NAME" in REPO_URL:
+        sys.exit(
+            "עדכן קודם את REPO_URL בתחילת הקובץ עם כתובת הריפו האמיתית שלך "
+            "(לדוגמה: git@github.com:your-username/lovegame-site.git)"
         )
-        
-    elif admin_password != "":
-        st.error(t["admin_login_err"])
 
+    ensure_repo_cloned()
+    copy_site_files()
+    commit_and_push(args.message)
+
+
+if __name__ == "__main__":
+    main()
