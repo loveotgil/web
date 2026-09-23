@@ -104,7 +104,6 @@ if 'players_db' not in st.session_state:
     ])
 
 # --- סרגלים צדדיים והגדרות שפה ---
-st.sidebar.image("https://storage.googleapis.com/gweb-unify-prod-live-bucket/images/gameslover_logo.original.png", width=120) # ניתן להחליף בלוגו שלך או תמונה מקומית
 lang = st.sidebar.selectbox("🌐 Choose Language / שפה / Язык", ["עברית", "English", "Русский"])
 t = TRANSLATIONS[lang]
 
@@ -123,7 +122,6 @@ st.sidebar.markdown("---")
 page = st.sidebar.radio("ניווט באתר", [t["nav_home"], t["nav_league"], t["nav_rules"], t["nav_admin"]])
 
 # --- כותרת ראשית ולוגו ---
-col_logo, col_title = st.sidebar.columns([1, 3]) if False else (None, None)
 st.title(f"🎲 {t['title']}")
 st.subheader(t['subtitle'])
 st.markdown("---")
@@ -153,7 +151,7 @@ if page == t["nav_home"]:
                     "username": username,
                     "email": email,
                     "provider": social_provider.split()[0],
-                    "score": #10  בונוס רישום ראשוני
+                    "score": 10  # בונוס רישום ראשוני
                 }])
                 st.session_state.players_db = pd.concat([st.session_state.players_db, new_row], ignore_index=True)
                 
@@ -167,12 +165,9 @@ if page == t["nav_home"]:
 # ==================== טבלת הליגה (League Standings) ====================
 elif page == t["nav_league"]:
     st.header(t["league_table_title"])
-    
-    # מיון השחקנים לפי ניקוד בסדר יורד
     sorted_df = st.session_state.players_db.sort_values(by="score", ascending=False).reset_index(drop=True)
-    sorted_df.index = sorted_df.index + 1  # דירוג מתחיל מ-1
+    sorted_df.index = sorted_df.index + 1
     
-    # תצוגה טבלאית יפה
     st.dataframe(
         sorted_df[["player_id", "username", "provider", "score"]],
         column_config={
@@ -182,6 +177,15 @@ elif page == t["nav_league"]:
             "score": "ניקוד ליגה"
         },
         use_container_width=True
+    )
+    
+    # כפתור ייצוא לקובץ CSV
+    csv_data = st.session_state.players_db.to_csv(index=False).encode('utf-8-sig')
+    st.download_button(
+        label="📥 ייצא את רשימת הנרשמים לקובץ CSV",
+        data=csv_data,
+        file_name="tournament_registrants.csv",
+        mime="text/csv",
     )
 
 # ==================== חוקים וטורניר (Rules) ====================
@@ -198,18 +202,13 @@ elif page == t["nav_rules"]:
 # ==================== פאנל ניהול (Admin Panel) ====================
 elif page == t["nav_admin"]:
     st.header(t["admin_title"])
-    
     admin_password = st.text_input(t["admin_pass"], type="password")
     
-    # סיסמת ניהול פשוטה להדגמה (ניתן לשנות לכל סיסמה שתרצה)
     if admin_password == "admin123":
         st.success("התחברת בהצלחה כמנהל מערכת!")
-        
         player_list = st.session_state.players_db["username"].tolist()
         selected_player = st.selectbox(t["select_player"], player_list)
-        
         current_score = int(st.session_state.players_db.loc[st.session_state.players_db["username"] == selected_player, "score"].values[0])
-        
         new_score_val = st.number_input(t["new_score"], value=current_score, step=1)
         
         if st.button(t["update_btn"]):
@@ -220,5 +219,14 @@ elif page == t["nav_admin"]:
         st.markdown("### רשימת שחקנים מלאה לניהול:")
         st.dataframe(st.session_state.players_db, use_container_width=True)
         
+        admin_csv = st.session_state.players_db.to_csv(index=False).encode('utf-8-sig')
+        st.download_button(
+            label="📥 הורד גיבוי נרשמים (CSV)",
+            data=admin_csv,
+            file_name="tournament_registrants_admin.csv",
+            mime="text/csv",
+        )
+        
     elif admin_password != "":
         st.error(t["admin_login_err"])
+
