@@ -153,7 +153,7 @@ if page == t["nav_home"]:
                     "username": username,
                     "email": email,
                     "provider": social_provider.split()[0],
-                    "score": 10  בונוס רישום ראשוני
+                    "score": #10  בונוס רישום ראשוני
                 }])
                 st.session_state.players_db = pd.concat([st.session_state.players_db, new_row], ignore_index=True)
                 
